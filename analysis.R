@@ -34,15 +34,16 @@ if(! file.exists('intSites.rds')){
               stdIntSiteFragments() %>%
               collapseReplicatesCalcAbunds() %>%
               annotateIntSites()
+  
+  # Update intSite metadata.
+  intSites$cellType2 <- samples[match(intSites$GTSP, samples$SpecimenAccNum),]$CellType
+  intSites$trial <- samples[match(intSites$GTSP, samples$SpecimenAccNum),]$Trial
+  
+  saveRDS(intSites, 'intSites.rds')
 } else {
   intSites <- readRDS('intSites.rds')
 }
   
-# Update intSite metadata.
-intSites$cellType2 <- samples[match(intSites$GTSP, samples$SpecimenAccNum),]$CellType
-intSites$trial <- samples[match(intSites$GTSP, samples$SpecimenAccNum),]$Trial
-
-saveRDS(intSites, 'intSites.rds')
 
 r <- dplyr::group_by(data.frame(intSites), GTSP) %>%
      dplyr::mutate(sitesInSample = n_distinct(posid)) %>%
